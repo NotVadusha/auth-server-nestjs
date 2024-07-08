@@ -21,7 +21,7 @@ export class UsersService {
   ];
 
   constructor(
-    @Inject("PHOTO_REPOSITORY")
+    @Inject("USERS_ENTITY")
     private userEntity: Repository<UserEntity>,
   ) {}
 
