@@ -5,6 +5,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
+import { ConfigModule } from "@nestjs/config";
 
 const DAY_IN_SECONDS = 86400;
 
@@ -16,6 +17,7 @@ const DAY_IN_SECONDS = 86400;
       secret: process.env.JWT_SECRET_PHRASE,
       signOptions: { expiresIn: `${DAY_IN_SECONDS * 28}s` },
     }),
+    ConfigModule,
   ],
   providers: [
     AuthService,

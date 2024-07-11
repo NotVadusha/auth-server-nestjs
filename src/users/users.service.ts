@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { UserEntity } from "./users.entity";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -17,11 +17,11 @@ export class UsersService {
     return this.userEntity.save(userData);
   }
 
-  async findOne(email: string): Promise<User | undefined> {
+  async findOne(
+    findOptions: FindOptionsWhere<UserEntity>[],
+  ): Promise<User | undefined> {
     return this.userEntity.find({
-      where: {
-        email: email,
-      },
+      where: findOptions,
     });
   }
 }
