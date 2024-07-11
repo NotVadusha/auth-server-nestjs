@@ -5,6 +5,7 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
+import { UserEntity } from "./users/users.entity";
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ConfigModule } from "@nestjs/config";
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+      autoLoadEntities: true,
+      entities: [UserEntity],
       synchronize: process.env.BUILD_TYPE === "development",
     }),
     AuthModule,

@@ -14,23 +14,29 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string) {
-    const user = await this.usersService.findOne(username);
+  async signIn(email: string, pass: string) {
+    const [user] = await this.usersService.findOne(email);
+
     if (user?.password !== pass) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.userId, username: user.username };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const payload = { sub: user.id, username: user.username };
+
+    const access_token = await this.jwtService.signAsync(payload, {
+      secret: "secret",
+    });
+
+    return { access_token };
   }
 
   async register(user: CreateUserDto) {
     const isEmailInUse = await this.usersService.findOne(user.email);
-    if (isEmailInUse)
+
+    if (isEmailInUse.length > 1)
       throw new ConflictException("This email is already in use.");
 
-    const { username, password } = await this.usersService.create(user);
-    return await this.signIn(username, password);
+    const { email, password } = await this.usersService.create(user);
+
+    return await this.signIn(email, password);
   }
 }

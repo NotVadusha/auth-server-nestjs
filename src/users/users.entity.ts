@@ -1,4 +1,4 @@
-import { Column, DataSource, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "User" })
 export class UserEntity {
@@ -20,12 +20,3 @@ export class UserEntity {
   @Column({ unique: true, nullable: false, length: 255 })
   password: string;
 }
-
-export const userProvider = [
-  {
-    provide: "USERS_ENTITY",
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(UserEntity),
-    inject: ["DATA_SOURCE"],
-  },
-];
