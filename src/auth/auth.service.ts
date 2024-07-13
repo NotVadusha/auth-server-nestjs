@@ -46,4 +46,11 @@ export class AuthService {
 
     return await this.signIn(email, password);
   }
+
+  async updatePassword(email: string, newPassword: string) {
+    return await this.usersService.update(
+      { email },
+      { email, password: newPassword },
+    );
+  }
 }

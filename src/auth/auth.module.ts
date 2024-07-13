@@ -6,6 +6,7 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
 import { ConfigModule } from "@nestjs/config";
+import { OtpModule } from "src/otp/otp.module";
 
 const DAY_IN_SECONDS = 86400;
 
@@ -18,6 +19,7 @@ const DAY_IN_SECONDS = 86400;
       signOptions: { expiresIn: `${DAY_IN_SECONDS * 28}s` },
     }),
     ConfigModule,
+    OtpModule,
   ],
   providers: [
     AuthService,
