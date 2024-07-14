@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
@@ -48,9 +49,14 @@ export class AuthService {
   }
 
   async updatePassword(email: string, newPassword: string) {
-    return await this.usersService.update(
+    const updatedRows = await this.usersService.update(
       { email },
       { email, password: newPassword },
     );
+
+    if (updatedRows.length < 1)
+      throw new NotFoundException("User not found. Rows weren't updated");
+
+    return updatedRows[0];
   }
 }

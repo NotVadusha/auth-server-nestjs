@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -37,29 +39,35 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get("test")
   getProfile(@Request() req) {
-    return req.user;
+    return { message: "you're accepted" };
   }
 
   @Public()
-  @Get("update-password/:email")
+  @Patch("update-password/:email")
   async updateUserPassword(
     @Param("email") email: string,
     @Body("password") newPassword: string,
+    @Body("updatePasswordToken") updatePasswordToken: string,
   ) {
+    const isTokenValid =
+      await this.otpService.validateUpdatePasswordToken(updatePasswordToken);
+    if (!isTokenValid) return new ForbiddenException("Token is not valid");
     return await this.authService.updatePassword(email, newPassword);
   }
 
   @Public()
   @Get("code/receive/:email")
   async getResetCode(@Param("email") email: string) {
-    const otp = await this.otpService.generateOtp(email);
-    return { otp };
+    await this.otpService.generateOtp(email);
+    return { message: "OTP sent to thee email" };
   }
 
   @Public()
   @Post("code/validate/:email")
   async validateOtp(@Param("email") email: string, @Body("otp") otp: number) {
     const isValid = await this.otpService.validateOtp(email, otp);
-    return { isValid };
+    const updatePasswordToken =
+      await this.otpService.getChangePasswordToken(email);
+    return { isValid, updatePasswordToken };
   }
 }
