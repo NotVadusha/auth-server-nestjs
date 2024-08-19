@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { OtpEntity } from "../otp/otp.entity";
 
 @Entity({ name: "User" })
 export class UserEntity {
@@ -17,6 +18,9 @@ export class UserEntity {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updateAt: Date;
 
-  @Column({ unique: true, nullable: false, length: 255 })
+  @Column({ nullable: false, length: 255 })
   password: string;
+
+  @OneToMany(() => OtpEntity, (otp) => otp.user)
+  otps: OtpEntity[];
 }

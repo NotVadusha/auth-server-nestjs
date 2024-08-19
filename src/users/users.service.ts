@@ -3,6 +3,7 @@ import { UserEntity } from "./users.entity";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { InjectRepository } from "@nestjs/typeorm";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 export type User = any;
 
@@ -23,5 +24,12 @@ export class UsersService {
     return this.userEntity.find({
       where: findOptions,
     });
+  }
+
+  async update(
+    criteria: FindOptionsWhere<UserEntity>,
+    updateParams: QueryDeepPartialEntity<UserEntity>,
+  ) {
+    return this.userEntity.update(criteria, updateParams);
   }
 }
