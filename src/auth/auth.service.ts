@@ -33,14 +33,14 @@ export class AuthService {
   }
 
   async register(user: CreateUserDto) {
-    const isEmailInUse = await this.usersService.findOne([
+    const isUserExist = await this.usersService.findOne([
       {
         email: user.email,
       },
       { username: user.username },
     ]);
 
-    if (isEmailInUse.length > 1)
+    if (isUserExist.length > 1)
       throw new ConflictException("Email or username is already in use.");
 
     const { email, password } = await this.usersService.create(user);

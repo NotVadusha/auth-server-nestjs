@@ -14,14 +14,20 @@ import { AuthService } from "./auth.service";
 import { CreateUserDto } from "src/users/dto/createUser.dto";
 import { LoginUserDto } from "./dto/login.dto";
 import { OtpService } from "src/otp/otp.service";
-import { EmailParam, ValidateOTPBody } from "src/otp/dto/validateOTP.dto";
+import {
+  EmailParam,
+  NameParam,
+  ValidateOTPBody,
+} from "src/otp/dto/validateOTP.dto";
 import { UpdatePasswordDto } from "./dto/updatePassword.dto";
+import { UsersService } from "src/users/users.service";
 
 @Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly otpService: OtpService,
+    private readonly userService: UsersService,
   ) {}
 
   @Public()
@@ -65,6 +71,18 @@ export class AuthController {
     const updatePasswordToken =
       await this.otpService.getChangePasswordToken(email);
     return { isValid, updatePasswordToken };
+  }
+
+  @Public()
+  @Post("check/email/:email")
+  async validateEmail(@Param() { email }: EmailParam) {
+    return { isExist: await this.userService.checkMail(email) };
+  }
+
+  @Public()
+  @Post("check/name/:name")
+  async validateName(@Param() { name }: NameParam) {
+    return { isExist: await this.userService.checkName(name) };
   }
 
   @UseGuards(AuthGuard)

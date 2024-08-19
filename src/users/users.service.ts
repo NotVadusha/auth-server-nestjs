@@ -33,4 +33,16 @@ export class UsersService {
     await this.userEntity.update(criteria, updateParams);
     return await this.userEntity.findBy(criteria);
   }
+
+  async checkMail(email: string) {
+    return !!(await this.userEntity.findOne({
+      where: { email },
+    }));
+  }
+
+  async checkName(name: string) {
+    return !!(await this.userEntity.findOne({
+      where: { username: name },
+    }));
+  }
 }
