@@ -26,8 +26,7 @@ export class AuthController {
   @Public()
   @Post("register")
   register(@Body() signInDto: CreateUserDto) {
-    console.log(signInDto);
-    return this.authService.signIn(signInDto.username, signInDto.password);
+    return this.authService.register(signInDto);
   }
 
   @UseGuards(AuthGuard)
