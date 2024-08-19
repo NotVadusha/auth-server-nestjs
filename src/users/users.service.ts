@@ -15,13 +15,13 @@ export class UsersService {
   ) {}
 
   async create(userData: CreateUserDto) {
-    return this.userEntity.save(userData);
+    return await this.userEntity.save(userData);
   }
 
   async findOne(
     findOptions: FindOptionsWhere<UserEntity>[],
   ): Promise<User | undefined> {
-    return this.userEntity.find({
+    return await this.userEntity.find({
       where: findOptions,
     });
   }
@@ -30,6 +30,7 @@ export class UsersService {
     criteria: FindOptionsWhere<UserEntity>,
     updateParams: QueryDeepPartialEntity<UserEntity>,
   ) {
-    return this.userEntity.update(criteria, updateParams);
+    await this.userEntity.update(criteria, updateParams);
+    return await this.userEntity.findBy(criteria);
   }
 }

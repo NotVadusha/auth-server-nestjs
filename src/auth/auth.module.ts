@@ -7,15 +7,14 @@ import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
 import { ConfigModule } from "@nestjs/config";
 import { OtpModule } from "src/otp/otp.module";
-
-const DAY_IN_SECONDS = 86400;
+import { DAY_IN_SECONDS } from "src/constants/timeConstants";
 
 @Module({
   imports: [
     UsersModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET_PHRASE,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: `${DAY_IN_SECONDS * 28}s` },
     }),
     ConfigModule,
