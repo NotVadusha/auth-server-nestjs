@@ -3,8 +3,6 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -16,6 +14,8 @@ import { AuthService } from "./auth.service";
 import { CreateUserDto } from "src/users/dto/createUser.dto";
 import { LoginUserDto } from "./dto/login.dto";
 import { OtpService } from "src/otp/otp.service";
+import { EmailParam, ValidateOTPBody } from "src/otp/dto/validateOTP.dto";
+import { UpdatePasswordDto } from "./dto/updatePassword.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -36,18 +36,11 @@ export class AuthController {
     return this.authService.register(signInDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Get("test")
-  getProfile(@Request() req) {
-    return { message: "you're accepted" };
-  }
-
   @Public()
   @Patch("update-password/:email")
   async updateUserPassword(
-    @Param("email") email: string,
-    @Body("password") newPassword: string,
-    @Body("updatePasswordToken") updatePasswordToken: string,
+    @Param() { email }: EmailParam,
+    @Body() { newPassword, updatePasswordToken }: UpdatePasswordDto,
   ) {
     const isTokenValid =
       await this.otpService.validateUpdatePasswordToken(updatePasswordToken);
@@ -57,17 +50,26 @@ export class AuthController {
 
   @Public()
   @Get("code/receive/:email")
-  async getResetCode(@Param("email") email: string) {
+  async getResetCode(@Param() { email }: EmailParam) {
     await this.otpService.generateOtp(email);
     return { message: "OTP sent to thee email" };
   }
 
   @Public()
   @Post("code/validate/:email")
-  async validateOtp(@Param("email") email: string, @Body("otp") otp: number) {
+  async validateOtp(
+    @Param() { email }: EmailParam,
+    @Body() { otp }: ValidateOTPBody,
+  ) {
     const isValid = await this.otpService.validateOtp(email, otp);
     const updatePasswordToken =
       await this.otpService.getChangePasswordToken(email);
     return { isValid, updatePasswordToken };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get("test")
+  getProfile(@Request() req) {
+    return { message: "you're accepted" };
   }
 }
